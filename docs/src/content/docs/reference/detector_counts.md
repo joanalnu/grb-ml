@@ -4,14 +4,17 @@ description: API Reference for grb_ml.simulations.detector_counts (function)
 ---
 
 ```python
-detector_counts(bkg, grb, start_bin=300)
+detector_counts(bkg, events)
 ```
 
-Injects a GRB pulse into a background time series on the interval start_bin to start_bin+pulse_duration
+Injects events (GRB pulse, cosmic ray, SSA, ...) into a background time series on the interval start_bin to start_bin+event_duration for n events.
 
 Args:
-    bkg (Array Tuple): Background counts Tuple of 2 NumPy Array (low and high channels)
-    grb (Array Tuple): GRB pulse
+    bkg (Array Tuple): Background coutns Tuple of 2 NumPy Array (low and high channels)
+    events (List of Dictionaries): With the structure:
+    events = [
+        {"signal": (Array Tuple), "start_bin": (int), "type": (string; grb, cosmic_ray, or grb), "is_grb": (int; 0 or 1)}
+    ]
 
 Returns:
-    Tuple of NumPy Arrays (same shape as bkg)
+    Tuple of 2 Arrays with the size of the background input with the injected events.
