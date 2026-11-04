@@ -1,0 +1,10 @@
+numpy
+
+# packaging
+setuptools
+wheel
+twine
+
+# documentation
+pyyaml
+pydoc-markdown
