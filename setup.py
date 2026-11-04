@@ -1,4 +1,4 @@
-from setuptools improt setup, find_packages
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as readme_file:
     long_description = readme_file.read()
@@ -14,7 +14,7 @@ with open("grb_ml/_version.py", "r") as version_file:
 
 setup(
         name="GRB-ML",
-        version=__version__,
+        # version=__version__,
         author="Alcaide-Núñez, J.",
         author_email="",
         description="CubeSat GRB Detection",
