@@ -1,0 +1,12 @@
+loaders:
+  - type: python
+    search_path: [.]
+    modules: ['my_package']
+processors:
+  - type: filter
+  - type: smart
+  - type: crossref
+renderer:
+  type: markdown
+  descriptive_class_title: false
+  render_module_header: true
