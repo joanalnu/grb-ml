@@ -24,3 +24,11 @@ Then go into the directory and install the package
 cd grb-ml
 pip install .
 ```
+
+If you want to contribute to the package, you may want to install it using the editor flag.
+
+```bash
+pip install -e .
+```
+
+That way, if you edit the package modules and files, they will automatically update in your installation.

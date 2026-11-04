@@ -7,7 +7,7 @@ description: "Basic Information About the GRB-ML Package"
 
 ## What is GRB-ML?
 
-GRB-ML is a Python package that uses simulations and machine learning to rapidly. This is necessary and useful since [GRB]() monitoring CubeSats and other satellites have to quickly decide whether to trigger an event alert to the [GCN]() or whether the signal was a false alert. The goal is to train a lightweight and efficient, but highly accurate machine model (based on [`sklearn`]() tools) to quickly predict whether a photon count signal is likely to be a GRB or rather noise, [cosmic rays]() or other radiation (e.g., [SAA]()).
+GRB-ML is a Python package that uses simulations and machine learning to rapidly. This is necessary and useful since [GRB](https://en.wikipedia.org/wiki/Gamma-ray_burst) monitoring CubeSats and other satellites have to quickly decide whether to trigger an event alert to the [GCN](https://gcn.nasa.gov/) or whether the signal was a false alert. The goal is to train a lightweight and efficient, but highly accurate machine model (based on [`sklearn`](https://scikit-learn.org/stable/index.html) tools) to quickly predict whether a photon count signal is likely to be a GRB or rather noise, [cosmic rays](https://en.wikipedia.org/wiki/Cosmic_ray) or other radiation (e.g., [SAA](https://en.wikipedia.org/wiki/South_Atlantic_Anomaly)).
 
 ## Who is GRB-ML For?
 
