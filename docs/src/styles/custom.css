@@ -1,0 +1,25 @@
+/* 
+  Add this to your astro.config.mjs under starlight > customCss: 
+  customCss: ['./src/styles/custom.css']
+*/
+
+:root {
+  /* Space-themed purple/indigo accent colors for GRB-ML */
+  --sl-color-accent-low: #1e1b4b;
+  --sl-color-accent: #6366f1;
+  --sl-color-accent-high: #c7d2fe;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #e0e7ff;
+  --sl-color-gray-2: #c7d2fe;
+  --sl-color-gray-3: #818cf8;
+  --sl-color-gray-4: #4f46e5;
+  --sl-color-gray-5: #312e81;
+  --sl-color-gray-6: #1e1b4b;
+  --sl-color-black: #0f172a;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #c7d2fe;
+  --sl-color-accent: #4f46e5;
+  --sl-color-accent-high: #312e81;
+}
