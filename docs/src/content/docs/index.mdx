@@ -1,40 +1,38 @@
 ---
-title: My Python Package
-description: A simple and powerful calculator for Python.
+title: Welcome to GRB-ML
+description: Rapid GRB classification using machine learning for CubeSats and limited resource environments.
 template: splash
 hero:
-  tagline: Start calculating faster with our optimized Python toolset.
+  tagline: Rapidly classify GRB signals from noise using lightweight machine learning models.
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Read the API Reference
-      link: /reference/my_package/
+    - text: Get Started
+      link: /manual/getting-started/
       icon: right-arrow
-      variant: primary
     - text: View on GitHub
-      link: https://github.com/yourusername/my_project
+      link: https://github.com/joanalnu/grb-ml
       icon: external
+      variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## Overview
+
+GRB-ML is a Python package that uses simulations and machine learning to rapidly predict whether a photon count signal is likely to be a Gamma-Ray Burst (GRB) or noise, cosmic rays, or other radiation like SAA. 
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Built for CubeSats" icon="rocket">
+		Designed to run with limited resources, making it ideal for monitoring CubeSats (like EIRSAT) that must quickly decide whether to trigger a GCN event alert.
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+	<Card title="Lightweight & Efficient" icon="seti:python">
+		Utilizes `sklearn`-based models to provide highly accurate yet efficient predictions suitable for personal computers or integration into other pipelines.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Easy Installation" icon="setting">
+		Install locally with a simple command: `pip install -e .`.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Authorship" icon="star">
+		Developed by Alcaide-Núñez J. and the CAPIBARA Collaboration's GAMMA Team. If you use this in your research, please acknowledge its use.
 	</Card>
 </CardGrid>
