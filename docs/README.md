@@ -1,4 +1,15 @@
+# Documentation of GRB-ML
+
+Documentation in `src/content/docs/manual/` is written manually.
+
+Documentation files in `src/content/docs/reference` (the API reference) is automatically written (not synced) using `grb-ml/generate_docs.py` using `pyyaml` and `pydocs_markdown`.
+
+The markdown files are then packages into an astro.build website using the Starlight (documentation) theme.
+
+Below you can find the original README file of the Starlight theme.
+
 # Starlight Starter Kit: Basics
+
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 
