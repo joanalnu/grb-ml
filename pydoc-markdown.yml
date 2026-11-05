@@ -1,12 +1,26 @@
 loaders:
   - type: python
     search_path: [.]
-    modules: ['my_package']
 processors:
   - type: filter
+    skip_empty_modules: true
   - type: smart
   - type: crossref
 renderer:
   type: markdown
   descriptive_class_title: false
-  render_module_header: true
+  render_module_header: false
+  add_module_prefix: false
+  code_headers: true
+  signature_in_header: false
+  signature_with_def: true
+  signature_code_block: true
+  render_typehint_in_data_header: true
+  docstrings_as_blockquote: false
+  use_fixed_header_levels: true
+  header_level_by_type:
+    Module: 1
+    Class: 2
+    Method: 3
+    Function: 2
+    Variable: 3
