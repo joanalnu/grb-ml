@@ -1,5 +1,5 @@
 ---
-title:
+title: "Naming"
 author: joanalnu & gemini
 description: "A summary about potential naming/copyright issues and similar projects."
 ---
