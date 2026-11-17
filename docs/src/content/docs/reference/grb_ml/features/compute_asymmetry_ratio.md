@@ -14,7 +14,7 @@ def grb_ml.features.compute_asymmetry_ratio(fg_window)
 ...
 
 Args:
-    fg_window (tuple of arrays): The foreground window returned by split_windows.
+    fg_window (tuple of arrays): The foreground window returned by      split_windows.
     
 Returns:
-    ...
+    assymetry_ratio (tuple)
