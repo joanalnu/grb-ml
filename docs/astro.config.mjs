@@ -1,11 +1,16 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
   integrations: [
     starlight({
       title: 'GRB-ML',
-      customCss: [],
+      customCss: [
+        // Add the KaTeX stylesheet here
+        'katex/dist/katex.min.css',
+      ],
       sidebar: [
         {
           label: 'Home',
@@ -23,4 +28,8 @@ export default defineConfig({
       ],
     }),
   ],
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
 });
