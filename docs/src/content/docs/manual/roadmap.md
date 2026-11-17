@@ -30,7 +30,7 @@ Build a realistic photon-counting time-series generator across two energy channe
 
 ---
 
-### Phase 2: Rolling-Window Feature Engineering (`features.py`) — 🔄 *Up Next*
+### Phase 2: Rolling-Window Feature Engineering (`features.py`) — ✅ *Completed*
 Convert raw 1D photon count time series into a 2D tabular dataset suitable for `scikit-learn` classifiers.
 - [ ] **Sliding Dual-Window Architecture:** Implement a rolling background window (e.g., $W_{	ext{bg}} = 100$ bins) and foreground trigger window (e.g., $W_{	ext{fg}} = 10$ bins) with a configurable buffer gap so rising GRB tails do not contaminate background estimates.
 - [ ] **Multi-Timescale Signal-to-Noise Ratio (SNR):**
@@ -43,7 +43,7 @@ Convert raw 1D photon count time series into a 2D tabular dataset suitable for `
 
 ---
 
-### Phase 3: Dataset Generation & Exploratory Data Analysis (`dataset.py`)
+### Phase 3: Dataset Generation & Exploratory Data Analysis (`dataset.py`) — 🔄 *Up Next*
 Create a large, balanced/stratified benchmark dataset representing thousands of simulated CubeSat orbits.
 - [ ] **Monte Carlo Orbit Generator:** Randomize GRB amplitudes, rise/decay constants ($	au_{	ext{rise}}, 	au_{	ext{decay}}$), hardness ratios, SAA durations, and cosmic ray frequencies.
 - [ ] **Feature Separability Visualization:** Plot 2D scatter plots and corner plots (e.g., $	ext{SNR}_{	ext{short}}$ vs. $	ext{SNR}_{	ext{long}}$, $	ext{SNR}$ vs. $HR$) to visually inspect how classes separate.
