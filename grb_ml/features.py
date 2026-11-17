@@ -131,10 +131,10 @@ def compute_asymmetry_ratio(fg_window):
     ...
 
     Args:
-        fg_window (tuple of arrays): The foreground window returned by split_windows.
+        fg_window (tuple of arrays): The foreground window returned by      split_windows.
         
     Returns:
-        ...
+        assymetry_ratio (tuple)
     """
 
     asymmetry_ratio = np.zeros(2)
@@ -158,15 +158,34 @@ def compute_asymmetry_ratio(fg_window):
     return asymmetry_ratio
 
 
-def feature_extraction_loop():
+def feature_extraction_loop(detector_counts, background_bins_number=100, foreground_bins_number=10):
     """
-    Feature Extraction loop
+    Feature Extraction loop\\
 
-    Args:
-        ...
+    Args:\\
+        - `detector_counts` (type): output of simulations.detector_counts() \\
+        - `background_bins_number` (int): set to 100 by default \\
+        - `foreground_bins_number` (int): set to 10 by default \\
 
-    Returns:
-        ...
+    Returns:\\
+        X (NumPy Array): of shape (n_valid_windows, 7), the feature matrix
     """
 
-    return None
+    X = []
+
+    l = len(detector_counts[0])
+    for i in range(background_bins_number, l-foreground_bins_number +1):
+        fg_window, bg_window = split_windows(detector_counts, i, background_bins_number, foreground_bins_number)
+
+        snr = compute_snr(fg_window, bg_window)
+        hr = compute_hardness_ratio(fg_window, bg_window)
+        p2m = compute_peak_to_mean_ratio(fg_window)
+        asym = compute_asymmetry_ratio(fg_window)
+
+        # np.concatenate automatically handles the fact that hr is 1dim while the rest are 2dim tuples
+        new_entry = np.concatenate([snr, [hr], p2m, asym])
+        X.append(new_entry)
+
+    X = np.array(X)
+
+    return X
