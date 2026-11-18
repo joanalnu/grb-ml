@@ -1,0 +1,23 @@
+/* Put in docs/src/styles/api.css and register in astro.config.mjs:
+   starlight({ customCss: ['./src/styles/api.css'] }) */
+.api-meta { display:flex; gap:.6rem; align-items:center; margin:0 0 1rem; color:var(--sl-color-gray-3); font-size:var(--sl-text-sm); }
+.api-badge { font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.1rem .5rem; border-radius:999px; color:var(--sl-color-black); }
+.api-badge-function { background:var(--sl-color-accent-high); }
+.api-badge-class { background:var(--sl-color-orange-high, #f5a97f); }
+
+.api-label { margin:1.2rem 0 .3rem; font-weight:600; font-size:var(--sl-text-sm); text-transform:uppercase; letter-spacing:.06em; color:var(--sl-color-gray-3); }
+
+dl.api-params { margin:.5rem 0 1.5rem; border-left:2px solid var(--sl-color-hairline); padding-left:1rem; }
+dl.api-params dt { margin-top:1rem; font-size:var(--sl-text-base); }
+dl.api-params dt code { font-weight:600; color:var(--sl-color-accent-high); background:none; padding:0; }
+dl.api-params .api-type { margin-left:.4rem; font-family:var(--sl-font-mono); font-size:var(--sl-text-sm); color:var(--sl-color-gray-3); }
+dl.api-params dt .api-type::before { content:": "; }
+dl.api-params dd { margin:.25rem 0 0 1rem; color:var(--sl-color-gray-2); }
+dl.api-params dd > :first-child { margin-top:0; }
+dl.api-params dd p { margin:.25rem 0; }
+
+/* signature block */
+.sl-markdown-content pre:first-of-type { border-left:3px solid var(--sl-color-accent); }
+.sl-markdown-content table { width:100%; }
+.sl-markdown-content td:first-child a code { font-weight:600; }
+h3[id] { padding-top:.5rem; border-top:1px solid var(--sl-color-hairline); margin-top:2rem; }

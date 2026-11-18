@@ -6,5 +6,6 @@ wheel
 twine
 
 # documentation
-pyyaml
-pydoc-markdown
+#pyyaml
+#pydoc-markdown
+numpydoc

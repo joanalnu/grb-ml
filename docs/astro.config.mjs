@@ -8,6 +8,7 @@ export default defineConfig({
     starlight({
       title: 'GRB-ML',
       customCss: [
+        './src/styles/api.css',
         // Add the KaTeX stylesheet here
         'katex/dist/katex.min.css',
       ],
