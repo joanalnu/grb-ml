@@ -7,3 +7,6 @@ twine
 
 # documentation
 numpydoc
+
+# testing
+pytest
