@@ -5,9 +5,22 @@ sidebar:
   order: 0
 ---
 
-This is an introduction tot he features module.
+This module focuses on converting raw signals produced by `simulations.py`
+into tabular data that can be used to train a `scikit-learn` model.
 
-I hope this texts pop-up in the index page for the module in the documentation.
+This module includes functions to compute different features and
+wraps everything in the `feature_extraction_loop()` function which
+returns the feature matrix (`numpy.ndarray` shape (n, 7), with `n`
+propotional to `n_bins` of the signal.
+
+The module that actually wraps the synthetic data generation and provides
+the features and orbit dataframes is `dataset.py`. In this module, there
+are functions available to compute the following features:
+
+- SNR (signal-to-noise ratio)
+- HR (hardness ratio)
+- Peak to mean ration
+- asummetry ratio
 
 ## Functions
 
