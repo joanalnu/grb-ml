@@ -189,10 +189,10 @@ def class_tables(cls):
             methods.append((name, member))
     out = []
     if props:
-        out += ["## Properties\n", "| Property | Description |", "| :--- | :--- |"]
+        out += ['<p class="api-label">Properties</p>\n', "| Property | Description |", "| :--- | :--- |"]
         out += [f"| `{n}` | {d} |" for n, d in props] + [""]
     if methods:
-        out += ["## Methods\n", "| Method | Description |", "| :--- | :--- |"]
+        out += ['<p class="api-label">Methods</p>\n', "| Method | Description |", "| :--- | :--- |"]
         out += [f"| [`{n}`](#{n.lower()}) | {first_sentence(m)} |" for n, m in methods] + [""]
     return "\n".join(out), methods
 
@@ -218,7 +218,7 @@ def write_page(module_name, name, kind, obj, module_dir, local_names):
         meta + "\n",
         f"```python\n{'class ' if kind == 'class' else ''}{signature(obj, full)}\n```\n",
         first_sentence(obj) + "\n",
-        render_doc(obj, 2, local_names),
+        render_doc(obj, 0, local_names),
     ]
 
     if kind == "class":

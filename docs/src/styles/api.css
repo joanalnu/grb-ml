@@ -5,7 +5,7 @@
 .api-badge-function { background:var(--sl-color-accent-high); }
 .api-badge-class { background:var(--sl-color-orange-high, #f5a97f); }
 
-.api-label { margin:1.2rem 0 .3rem; font-weight:600; font-size:var(--sl-text-sm); text-transform:uppercase; letter-spacing:.06em; color:var(--sl-color-gray-3); }
+.api-label { margin:1.8rem 0 .6rem; padding-bottom:.25rem; font-size:var(--sl-text-base); font-weight:700; color:var(--sl-color-white); border-bottom:1px solid var(--sl-color-hairline); }
 
 dl.api-params { margin:.5rem 0 1.5rem; border-left:2px solid var(--sl-color-hairline); padding-left:1rem; }
 dl.api-params dt { margin-top:1rem; font-size:var(--sl-text-base); }
