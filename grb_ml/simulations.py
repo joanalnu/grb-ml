@@ -2,15 +2,32 @@ import numpy as np
 
 def generate_background(n_bins, lam_low=40, lam_high=15):
     """
-    Generates background radiation noise with Poisson distribution.
+    Generate Poisson background counts for both energy channels.
 
-    Args:
-        n_bins (int): number of times bins with lam_low+lam_high counts each
-        lam_low (int): average rate of the low-energy channel
-        lam_high (int): average rate of the high-energy channel
+    Parameters
+    ----------
+    n_bins : int
+        Number of time bins.
+    lam_low : float, default 40
+        Mean count per bin, low-energy channel.
+    lam_high : float, default 15
+        Mean count per bin, high-energy channel.
 
-    Returns:
-        Tuple of 2 NumPy Arrays (each shape (n_bins,))
+    Returns
+    -------
+    low, high : numpy.ndarray, shape (n_bins,)
+        Background counts per channel.
+
+    Raises
+    ------
+    ValueError
+        If a rate is negative.
+
+    Examples
+    --------
+    >>> low, high = generate_background(1000)
+    >>> low.shape
+    (1000,)
     """
 
     if lam_low<0:
@@ -26,17 +43,38 @@ def generate_background(n_bins, lam_low=40, lam_high=15):
 
 def generate_grb_pulse(duration_bins, amplitude, tau_rise=2.0, tau_decay=20.0, hardness_ratio=1.5):
     """
-    Generates the photon count rate of a GRB signal.
+    Generate a GRB pulse with a fast rise and exponential decay.
 
-    Args:
-        duration_bins (int) duration of the signal
-        amplitude (int): peak count rate
-        tau_rise (float): rise time constant
-        tau_decay (float): decay time constant
-        hardness_ratio (float): ratio high_counts/low_counts
+    Parameters
+    ----------
+    duration_bins : int
+        Duration of the pulse in bins.
+    amplitude : float
+        Peak count rate of the low channel.
+    tau_rise : float, default 2.0
+        Rise time constant.
+    tau_decay : float, default 20.0
+        Decay time constant (must be >= `tau_rise`).
+    hardness_ratio : float, default 1.5
+        High/low channel rate ratio, in [1.0, 2.5].
 
-    Returns:
-        Tuple of 2 NumPy Arrays (each shape (duration_bins,))
+    Returns
+    -------
+    low, high : numpy.ndarray, shape (duration_bins,)
+        Poisson-sampled counts per channel.
+
+    Raises
+    ------
+    ValueError
+        If an argument is outside its allowed range.
+
+    Notes
+    -----
+    The low-channel rate is
+
+    .. math:: r(t) = A\\,(1 - e^{-t/\\tau_r})\\,e^{-t/\\tau_d}
+
+    and the high channel is ``hardness_ratio * r(t)``.
     """
 
     if duration_bins<=0:
@@ -74,14 +112,24 @@ def generate_grb_pulse(duration_bins, amplitude, tau_rise=2.0, tau_decay=20.0, h
 
 def generate_false_alarm(duration_bins=2, amplitude=150):
     """
-    Generates a short, sharp false alarm spike (e.g., cosmic ray hit).
+    Generate a short, sharp spike mimicking a cosmic-ray hit.
 
-    Args:
-        duration_bins (int): very short duration (1-2 bins)
-        amplitude (int): peak count rate
+    Parameters
+    ----------
+    duration_bins : int, default 2
+        Duration of the spike in bins.
+    amplitude : float, default 150
+        Nominal peak count rate (randomly scaled by 0.8-1.2).
 
-    Returns:
-        Tuple of 2 NumPy Arrays (low and high channels)
+    Returns
+    -------
+    low, high : numpy.ndarray, shape (duration_bins,)
+        Counts per channel; the high channel is ~1.1x the low channel.
+
+    Raises
+    ------
+    ValueError
+        If `duration_bins` or `amplitude` is not positive.
     """
 
     if duration_bins<=0:
@@ -102,15 +150,30 @@ def generate_false_alarm(duration_bins=2, amplitude=150):
 
 def generate_saa_crossing(duration_bins=300, amplitude=60, hardness_ratio=0.4):
     """
-    Generates a slow, symmetric radiation belt crossing (e.g., South Atlantic Anomaly).
+    Generate a slow, symmetric South Atlantic Anomaly crossing.
 
-    Args:
-        duration_bins (int): duration of the crossing in bins
-        amplitude (int): peak count rate in the low-energy channel
-        hardness_ratio (float): ratio high_counts/low_counts (typically soft, < 1.0)
+    Parameters
+    ----------
+    duration_bins : int, default 300
+        Duration of the crossing in bins.
+    amplitude : float, default 60
+        Peak low-channel count rate.
+    hardness_ratio : float, default 0.4
+        High/low channel ratio, in (0, 1] (a soft spectrum).
 
-    Returns:
-        Tuple of 2 NumPy Arrays (low and high channels, each shape (duration_bins,))
+    Returns
+    -------
+    low, high : numpy.ndarray, shape (duration_bins,)
+        Poisson-sampled counts per channel.
+
+    Raises
+    ------
+    ValueError
+        If an argument is outside its allowed range.
+
+    Notes
+    -----
+    The rate follows a half sine wave, :math:`A\\sin(\\pi t / T)`.
     """
     if duration_bins <= 0:
         raise ValueError("Duration of the bins must be positive.")
@@ -137,19 +200,34 @@ def generate_saa_crossing(duration_bins=300, amplitude=60, hardness_ratio=0.4):
 
 def detector_counts(bkg, events):
     """
-    Injects events (GRB pulse, cosmic ray, SSA, ...) into a background time series on the interval start_bin to start_bin+event_duration for n events.
+    Inject events into a background time series.
 
-    Args:
-        bkg (Array Tuple): Background coutns Tuple of 2 NumPy Array (low and high channels)
-        events (List of Dictionaries): With the structure:
-        events = [
-            {"signal": (Array Tuple), "start_bin": (int), "type": (string; grb, cosmic_ray, or grb), "is_grb": (int; 0 or 1)}
-        ]
+    Parameters
+    ----------
+    bkg : tuple of numpy.ndarray
+        ``(low, high)`` background counts.
+    events : list of dict
+        Each dict has the keys ``"signal"`` (``(low, high)`` arrays),
+        ``"start_bin"`` (int, > 0), ``"type"`` (str, e.g. ``"grb"``) and
+        optionally ``"is_grb"`` (0 or 1).
 
-    Returns:
-        Tuple of 2 Arrays with the size of the background input with the injected events.
+    Returns
+    -------
+    low, high : numpy.ndarray
+        Copies of the background with all events added.
+
+    Raises
+    ------
+    ValueError
+        If `events` is empty, channel lengths differ, an event does not fit
+        in the background, or ``start_bin`` is not positive.
+
+    See Also
+    --------
+    generate_background
+    generate_grb_pulse
     """
-    
+
     if len(events)==0:
         raise ValueError("Length of the events array must be larger than 0.")
 
@@ -189,4 +267,3 @@ def detector_counts(bkg, events):
         counts_high[start_bin:end_bin] += event_high
 
     return (counts_low, counts_high)
-
