@@ -32,16 +32,16 @@ Build a realistic photon-counting time-series generator across two energy channe
 
 ### Phase 2: Rolling-Window Feature Engineering (`features.py`) — ✅ *Completed*
 Convert raw 1D photon count time series into a 2D tabular dataset suitable for `scikit-learn` classifiers.
-- [ ] **Sliding Dual-Window Architecture:** Implement a rolling background window (e.g., $W_{	ext{bg}} = 100$ bins) and foreground trigger window (e.g., $W_{	ext{fg}} = 10$ bins) with a configurable buffer gap so rising GRB tails do not contaminate background estimates.
+- [ ] **Sliding Dual-Window Architecture:** Implement a rolling background window (e.g., $W_{\text{bg}} = 100$ bins) and foreground trigger window (e.g., $W_{\text{fg}} = 10$ bins) with a configurable buffer gap so rising GRB tails do not contaminate background estimates.
 - [ ] **Multi-Timescale Signal-to-Noise Ratio (SNR):**
-  $$	ext{SNR} = rac{\mu_{	ext{fg}} - \mu_{	ext{bg}}}{\sigma_{	ext{bg}}}$$
-  Compute across short ($0.2	ext{ s}$), medium ($1.0	ext{ s}$), and long ($4.0	ext{ s}$) foreground windows.
+  $$\text{SNR} = \frac{\mu_{\text{fg}} - \mu_{\text{bg}}}{\sigma_{\text{bg}}}$$
+  Compute across short ($0.2\text{ s}$), medium ($1.0\text{ s}$), and long ($4.0\text{ s}$) foreground windows.
 - [ ] **Spectral Hardness Ratio ($HR$):** Calculate the ratio of background-subtracted high-energy counts to low-energy counts:
-  $$HR = rac{\mu_{	ext{fg, high}} - \mu_{	ext{bg, high}}}{\mu_{	ext{fg, low}} - \mu_{	ext{bg, low}}}$$
+  $$HR = \frac{\mu_{\text{fg, high}} - \mu_{\text{bg, high}}}{\mu_{\text{fg, low}} - \mu_{\text{bg, low}}}$$
 - [ ] **Pulse Shape & Asymmetry Metrics:** Extract peak-to-mean ratio (to catch 1-bin cosmic rays) and rise-to-decay skewness within the foreground window.
 - [ ] **Ground-Truth Labeling Pipeline:** Automatically label each rolling window (`1` = Real GRB active in foreground window, `0` = Background / SAA / Cosmic Ray).
 
----
+--- 
 
 ### Phase 3: Dataset Generation & Exploratory Data Analysis (`dataset.py`) — 🔄 *Up Next*
 Create a large, balanced/stratified benchmark dataset representing thousands of simulated CubeSat orbits.
