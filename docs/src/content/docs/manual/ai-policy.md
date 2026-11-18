@@ -1,4 +1,8 @@
-# AI Policy
+---
+title: "AI Policy"
+author: joanalnu
+description: "Policy about AI Usage Rules when contributing to the GRB-ML project including code development, debugging and documentation writing among other tasks."
+---
 
 _This document outlines the policies for AI and/or LLM assisted software (and documentation) development within this project._
 
