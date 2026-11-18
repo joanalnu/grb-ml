@@ -1,14 +1,12 @@
 ---
 title: generate_background
-description: API Reference for grb_ml.simulations.generate_background
+description: Generates background radiation noise with Poisson distribution.
 ---
 
-**Module:** `grb_ml.simulations` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
 
 ```python
-def grb_ml.simulations.generate_background(n_bins, lam_low=40, lam_high=15)
+grb_ml.simulations.generate_background(n_bins, lam_low=40, lam_high=15)
 ```
 
 Generates background radiation noise with Poisson distribution.

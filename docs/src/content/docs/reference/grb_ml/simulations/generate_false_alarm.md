@@ -1,14 +1,12 @@
 ---
 title: generate_false_alarm
-description: API Reference for grb_ml.simulations.generate_false_alarm
+description: Generates a short, sharp false alarm spike (e.g., cosmic ray hit).
 ---
 
-**Module:** `grb_ml.simulations` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
 
 ```python
-def grb_ml.simulations.generate_false_alarm(duration_bins=2, amplitude=150)
+grb_ml.simulations.generate_false_alarm(duration_bins=2, amplitude=150)
 ```
 
 Generates a short, sharp false alarm spike (e.g., cosmic ray hit).

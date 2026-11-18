@@ -1,14 +1,12 @@
 ---
 title: generate_saa_crossing
-description: API Reference for grb_ml.simulations.generate_saa_crossing
+description: Generates a slow, symmetric radiation belt crossing (e.g., South Atlantic Anomaly).
 ---
 
-**Module:** `grb_ml.simulations` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
 
 ```python
-def grb_ml.simulations.generate_saa_crossing(duration_bins=300, amplitude=60, hardness_ratio=0.4)
+grb_ml.simulations.generate_saa_crossing(duration_bins=300, amplitude=60, hardness_ratio=0.4)
 ```
 
 Generates a slow, symmetric radiation belt crossing (e.g., South Atlantic Anomaly).

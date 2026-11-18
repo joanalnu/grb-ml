@@ -1,14 +1,12 @@
 ---
 title: detector_counts
-description: API Reference for grb_ml.simulations.detector_counts
+description: Injects events (GRB pulse, cosmic ray, SSA, ...) into a background time series on the interval start_bin to start_bin+event_duration for n events.
 ---
 
-**Module:** `grb_ml.simulations` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
 
 ```python
-def grb_ml.simulations.detector_counts(bkg, events)
+grb_ml.simulations.detector_counts(bkg, events)
 ```
 
 Injects events (GRB pulse, cosmic ray, SSA, ...) into a background time series on the interval start_bin to start_bin+event_duration for n events.

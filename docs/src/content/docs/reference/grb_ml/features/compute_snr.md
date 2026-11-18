@@ -1,21 +1,51 @@
 ---
 title: compute_snr
-description: API Reference for grb_ml.features.compute_snr
+description: Compute the signal-to-noise ratio of each energy channel.
 ---
 
-**Module:** `grb_ml.features` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
 
 ```python
-def grb_ml.features.compute_snr(fg_window, bg_window)
+grb_ml.features.compute_snr(fg_window, bg_window)
 ```
 
-Computes the signal-to-noise ratio (SNR) for a signal divided into foreground and background windows.
+Compute the signal-to-noise ratio of each energy channel.
 
-Args:
-    fg_window (tuple of arrays): The foreground window returned by split_windows.
-    bg_window (tuple of arrays): The background window returned by split_windows.
+<p class="api-label">Parameters</p>
 
-Returns:
-    SNR (array of arrays): SNR for the low (index=0) and high (index=1) energy channels. The SNR is given by (mean_foreground - mean_background) / std_background, for each channel separately.
+<dl class="api-params">
+<dt><code>fg_window, bg_window</code> <span class="api-type">tuple of numpy.ndarray</span></dt>
+<dd>
+
+Windows returned by `split_windows`.
+
+</dd>
+</dl>
+
+<p class="api-label">Returns</p>
+
+<dl class="api-params">
+<dt><code>snr</code> <span class="api-type">numpy.ndarray, shape (2,)</span></dt>
+<dd>
+
+SNR of the low (index 0) and high (index 1) channel.
+
+</dd>
+</dl>
+
+<p class="api-label">Raises</p>
+
+<dl class="api-params">
+<dt> <span class="api-type">ValueError</span></dt>
+<dd>
+
+If a window is empty or the background standard deviation is zero.
+
+</dd>
+</dl>
+
+<p class="api-label">Notes</p>
+
+For each channel,
+
+$$\mathrm{SNR} = \frac{\bar{x}_\mathrm{fg} - \bar{x}_\mathrm{bg}}{\sigma_\mathrm{bg}}$$

@@ -1,14 +1,12 @@
 ---
 title: generate_labels
-description: API Reference for grb_ml.dataset.generate_labels
+description: Produces the 1D target array mathing the exact rows returned by features.feature_extraction_loop().\
 ---
 
-**Module:** `grb_ml.dataset` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.dataset</code></p>
 
 ```python
-def grb_ml.dataset.generate_labels(n_bins, events, background_bins_number=100, foreground_bins_number=10)
+grb_ml.dataset.generate_labels(n_bins, events, background_bins_number=100, foreground_bins_number=10)
 ```
 
 Produces the 1D target array mathing the exact rows returned by features.feature_extraction_loop().\

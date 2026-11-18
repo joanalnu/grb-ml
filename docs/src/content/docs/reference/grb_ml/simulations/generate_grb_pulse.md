@@ -1,14 +1,12 @@
 ---
 title: generate_grb_pulse
-description: API Reference for grb_ml.simulations.generate_grb_pulse
+description: Generates the photon count rate of a GRB signal.
 ---
 
-**Module:** `grb_ml.simulations` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
 
 ```python
-def grb_ml.simulations.generate_grb_pulse(duration_bins, amplitude, tau_rise=2.0, tau_decay=20.0, hardness_ratio=1.5)
+grb_ml.simulations.generate_grb_pulse(duration_bins, amplitude, tau_rise=2.0, tau_decay=20.0, hardness_ratio=1.5)
 ```
 
 Generates the photon count rate of a GRB signal.

@@ -11,9 +11,9 @@ API reference for `grb_ml.features`.
 
 | Function | Description |
 | :--- | :--- |
-| [`compute_asymmetry_ratio`](./compute_asymmetry_ratio/) | ... |
-| [`compute_hardness_ratio`](./compute_hardness_ratio/) | Computes the hardness ratio (HR) for a detector signal splitted into background and foreground windows. |
-| [`compute_peak_to_mean_ratio`](./compute_peak_to_mean_ratio/) | ... |
-| [`compute_snr`](./compute_snr/) | Computes the signal-to-noise ratio (SNR) for a signal divided into foreground and background windows. |
-| [`feature_extraction_loop`](./feature_extraction_loop/) | Feature Extraction loop\ |
-| [`split_windows`](./split_windows/) | Splits the detected signal counts into a background window (100 bins before given bin i) and a foreground window (10 bins after i).\ |
+| [`split_windows`](./split_windows/) | Split a detector time series into foreground and background windows. |
+| [`compute_snr`](./compute_snr/) | Compute the signal-to-noise ratio of each energy channel. |
+| [`compute_hardness_ratio`](./compute_hardness_ratio/) | Compute the hardness ratio (HR) of the background-subtracted signal. |
+| [`compute_peak_to_mean_ratio`](./compute_peak_to_mean_ratio/) | Compute the peak-to-mean ratio of the foreground window. |
+| [`compute_asymmetry_ratio`](./compute_asymmetry_ratio/) | Compute the temporal asymmetry of the foreground window. |
+| [`feature_extraction_loop`](./feature_extraction_loop/) | Extract the feature matrix by sliding over every valid bin. |

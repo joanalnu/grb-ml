@@ -1,20 +1,45 @@
 ---
 title: compute_peak_to_mean_ratio
-description: API Reference for grb_ml.features.compute_peak_to_mean_ratio
+description: Compute the peak-to-mean ratio of the foreground window.
 ---
 
-**Module:** `grb_ml.features` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
 
 ```python
-def grb_ml.features.compute_peak_to_mean_ratio(fg_window)
+grb_ml.features.compute_peak_to_mean_ratio(fg_window)
 ```
 
-...
+Compute the peak-to-mean ratio of the foreground window.
 
-Args:
-    fg_window (tuple of arrays): The foreground window returned by split_windows.
+<p class="api-label">Parameters</p>
 
-Returns:
-    Array of values containing the peak-to-mean ratio for the low-energy (index=0) and high-energy (index=1) channels.
+<dl class="api-params">
+<dt><code>fg_window</code> <span class="api-type">tuple of numpy.ndarray</span></dt>
+<dd>
+
+Foreground window returned by `split_windows`.
+
+</dd>
+</dl>
+
+<p class="api-label">Returns</p>
+
+<dl class="api-params">
+<dt> <span class="api-type">numpy.ndarray, shape (2,)</span></dt>
+<dd>
+
+``max / mean`` for the low and high channel (``0`` if the mean is 0).
+
+</dd>
+</dl>
+
+<p class="api-label">Raises</p>
+
+<dl class="api-params">
+<dt> <span class="api-type">ValueError</span></dt>
+<dd>
+
+If a channel of `fg_window` is empty.
+
+</dd>
+</dl>

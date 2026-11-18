@@ -1,21 +1,50 @@
 ---
 title: compute_hardness_ratio
-description: API Reference for grb_ml.features.compute_hardness_ratio
+description: Compute the hardness ratio (HR) of the background-subtracted signal.
 ---
 
-**Module:** `grb_ml.features` | **Type:** `Function`
-
-
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
 
 ```python
-def grb_ml.features.compute_hardness_ratio(fg_window, bg_window)
+grb_ml.features.compute_hardness_ratio(fg_window, bg_window)
 ```
 
-Computes the hardness ratio (HR) for a detector signal splitted into background and foreground windows.
+Compute the hardness ratio (HR) of the background-subtracted signal.
 
-Args:
-    fg_window (tuple of arrays): The foreground window returned by split_windows.
-    bg_window (tuple of arrays): The background window returned by split_windows.
+<p class="api-label">Parameters</p>
 
-Returns:
-    HR (int): hardness ratio for the signal given by (foreground_high_mean - background_high_mean) / (foreground_low_mean - background_low_mean)
+<dl class="api-params">
+<dt><code>fg_window, bg_window</code> <span class="api-type">tuple of numpy.ndarray</span></dt>
+<dd>
+
+Windows returned by `split_windows`.
+
+</dd>
+</dl>
+
+<p class="api-label">Returns</p>
+
+<dl class="api-params">
+<dt> <span class="api-type">float</span></dt>
+<dd>
+
+Net high-channel rate divided by net low-channel rate. ``0.0`` if
+either net rate is not positive.
+
+</dd>
+</dl>
+
+<p class="api-label">Raises</p>
+
+<dl class="api-params">
+<dt> <span class="api-type">ValueError</span></dt>
+<dd>
+
+If a window is empty.
+
+</dd>
+</dl>
+
+<p class="api-label">Notes</p>
+
+$$\mathrm{HR} = \frac{\bar{x}^\mathrm{high}_\mathrm{fg} - \bar{x}^\mathrm{high}_\mathrm{bg}}{\bar{x}^\mathrm{low}_\mathrm{fg} - \bar{x}^\mathrm{low}_\mathrm{bg}}$$
