@@ -2,16 +2,31 @@ import numpy as np
 
 def generate_labels(n_bins, events, background_bins_number=100, foreground_bins_number=10):
     """
-    Produces the 1D target array mathing the exact rows returned by features.feature_extraction_loop().\\
+    Produces the 1D target array matching the exact rows returned by features.feature_extraction_loop().
 
-    Args:\\
-        - n_bins (int): number of bins of ...\\
-        - events (list of dictionaries): with the structure events = [{"signal": (Array Tuple), "start_bin": (int), "type": (string; grb, cosmic_ray, or grb), "is_grb": (int; 0 or 1)}]\\
-        - background_bins_number (int): set to 100 by default\\
-        - foreground_bins_number (int): set to 10 by default\\
+    Parameters
+    ----------
+    n_bins : int
+        signal length in bin number.
+    events : list of dict
+        Each dict has the keys ``"signal"`` (``(low, high)`` arrays),
+        ``"start_bin"`` (int, > 0), ``"type"`` (str, e.g. ``"grb"``) and
+        optionally ``"is_grb"`` (0 or 1).
+    background_bins_number : int, default 100
+        Number of bins in the background window.
+    foreground_bins_number : int, default 10
+        Number of bins in the foreground window.
 
-    Returns:
-        - y (1D array): the target column (is_grb), if more than half of the bins are is_grb true
+    Returns
+    -------
+    y : numpy.ndarray
+        Target column: true if more than half of the window values are is_grb=1
+
+    Notes
+    -----
+    Returned array has shape (n,) with
+    `n = n_bins - background_bins_number - foreground_bins_number + 1`.
+
     """
 
     # 1. Create a blank 1D mask of 0s (length = total bins in the orbit)
@@ -40,14 +55,34 @@ def generate_labels(n_bins, events, background_bins_number=100, foreground_bins_
 
 def generate_dataset(n_orbits=50, n_bins=1000):
     """
-    Simulate n_orbits separate CubeSat orbits in a loop, where each orbit generates its own X_orbit and y_orbit with length (n_bins - background_bins_number - foreground_bins_number + 1).
+    Simulate n_orbits separate CubeSat orbits in a loop, where each orbit generates its own X_orbit and y_orbit with length `(n_bins - background_bins_number - foreground_bins_number + 1)`.
 
-    Args:
-        - n_orbits: ...
-        - n_bins: ...
+    Parameters
+    ----------
+    n_orbits : int, default 50
+        Number of separate orbits to simulate.
+    n_bins : int, default 1000
+        Number of bins in an orbit, each bin is a photon count recording.
 
-    Returns:
-        ...
+    Returns
+    -------
+    X_orbit : numpy.ndarray (n, 7)
+        The feature matrix compiled with the results of the
+        simulation module
+    y_orbit : numpy.ndarray (n, )
+        The target array with the information returned by generate_labels
+
+    Raises
+    ------
+
+    Notes
+    -----
+    Each orbit has a signal with length n_bins.
+
+    The length each orbit signal after applying the background
+    and foreground cuts (length of the output) `n = n_bins -
+    background_bins_number - foreground_bins_number + 1`.
+
     """
 
 
