@@ -5,7 +5,9 @@ sidebar:
   order: 0
 ---
 
-API reference for `grb_ml.features`.
+This is an introduction tot he features module.
+
+I hope this texts pop-up in the index page for the module in the documentation.
 
 ## Functions
 
