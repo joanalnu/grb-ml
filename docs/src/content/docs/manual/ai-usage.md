@@ -1,4 +1,4 @@
-# AI Usage
+# AI Policy
 
 _This document outlines the policies for AI and/or LLM assisted software (and documentation) development within this project._
 
