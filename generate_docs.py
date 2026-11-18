@@ -1,35 +1,37 @@
+"""Generate NumPy/Pandas-style API reference pages for an Astro Starlight site.
+
+Requires:  pip install numpydoc
+Usage:     python generate_docs.py [package ...]      (default: PACKAGES below)
+
+Docstrings must be NumPy-style (Parameters / Returns / Raises / See Also /
+Notes / Examples sections with ---- underlines).
+"""
+import html
+import importlib
+import inspect
 import os
 import re
-import yaml
-import importlib
 import pkgutil
-import inspect
-import subprocess
+import shutil
+import sys
 from pathlib import Path
 
-# Target directory matching your Astro/Starlight structure
+from numpydoc.docscrape import NumpyDocString
+
+PACKAGES = ["grb_ml"]  # <- your package name(s)
 DOCS_DIR = Path("docs/src/content/docs/reference")
-CONFIG_FILE = "pydoc-markdown.yml"
-# Optional: Set your repository URL for "[source]" links like NumPy/Pandas
-REPO_URL = os.environ.get("REPO_URL", "")  # e.g., "https://github.com/org/repo/blob/main"
+REPO_URL = os.environ.get("REPO_URL", "")  # e.g. https://github.com/org/repo/blob/main
 
 
-def load_config():
-    """Load the base pydoc-markdown configuration if it exists."""
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return yaml.safe_load(f) or {}
-    return {}
-
-
+# --------------------------------------------------------------------------
+# Discovery
+# --------------------------------------------------------------------------
 def get_package_modules(package_name):
-    """Recursively discover all modules within a package."""
     try:
         package = importlib.import_module(package_name)
     except ImportError as e:
         print(f"Skipping {package_name}: {e}")
         return []
-
     modules = [package.__name__]
     if hasattr(package, "__path__"):
         for _, name, _ in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
@@ -37,251 +39,234 @@ def get_package_modules(package_name):
     return modules
 
 
-def get_first_sentence(obj):
-    """Extract a clean one-line summary for module index tables."""
-    doc = inspect.getdoc(obj)
-    if not doc:
-        return "No description available."
-    first_line = doc.strip().split("\n\n")[0].replace("\n", " ").strip()
-    return first_line
+def extract_members(module_name):
+    """Public classes/functions *defined* in the module, in source order."""
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError:
+        return []
+    members = []
+    for name, obj in inspect.getmembers(module):
+        if name.startswith("_") or inspect.ismodule(obj):
+            continue
+        if getattr(obj, "__module__", None) != module_name:
+            continue
+        if inspect.isclass(obj):
+            members.append((name, "class", obj))
+        elif inspect.isfunction(obj):
+            members.append((name, "function", obj))
+
+    def lineno(m):
+        try:
+            return inspect.getsourcelines(m[2])[1]
+        except (OSError, TypeError):
+            return 0
+
+    return sorted(members, key=lineno)
 
 
-def get_source_link(obj):
-    """Generate a direct GitHub/GitLab link to the object's source code."""
+# --------------------------------------------------------------------------
+# Small helpers
+# --------------------------------------------------------------------------
+def parse(obj):
+    return NumpyDocString(inspect.getdoc(obj) or "")
+
+
+def rst_to_md(text):
+    """Convert reST math (``.. math::`` / ``:math:``) to $$..$$ / $..$ for remark-math."""
+    text = re.sub(r":math:`([^`]+)`", r"$\1$", text)
+    text = re.sub(r"^\.\. math::\s*(.+)$", r"$$\1$$", text, flags=re.M)
+    return text
+
+
+def join(lines):
+    return rst_to_md("\n".join(lines).strip())
+
+
+def first_sentence(obj):
+    summary = join(parse(obj)["Summary"])
+    return (summary or "No description available.").replace("|", "\\|")
+
+
+def signature(obj, name):
+    try:
+        sig = str(inspect.signature(obj))
+    except (ValueError, TypeError):
+        sig = "(...)"
+    return f"{name}{sig}"
+
+
+def source_link(obj):
     if not REPO_URL:
         return ""
     try:
-        file_path = inspect.getsourcefile(obj)
-        lines, start_line = inspect.getsourcelines(obj)
-        rel_path = Path(file_path).resolve().relative_to(Path.cwd().resolve())
-        end_line = start_line + len(lines) - 1
-        return f"[[source]]({REPO_URL}/{rel_path.as_posix()}#L{start_line}-L{end_line})"
+        path = Path(inspect.getsourcefile(obj)).resolve().relative_to(Path.cwd().resolve())
+        lines, start = inspect.getsourcelines(obj)
+        return f"[source]({REPO_URL}/{path.as_posix()}#L{start}-L{start + len(lines) - 1})"
     except Exception:
         return ""
 
 
-def extract_members(module_name):
-    """Yields (name, type, full_path, obj) for public classes and functions defined in a module."""
-    try:
-        module = importlib.import_module(module_name)
-    except ImportError:
-        return
+# --------------------------------------------------------------------------
+# Section renderers
+# --------------------------------------------------------------------------
+def label(text, level):
+    """Top-level objects get real headings (-> Starlight TOC); methods get a styled label."""
+    if level:
+        return f"{'#' * level} {text}\n"
+    return f'<p class="api-label">{text}</p>\n'
 
-    for name, obj in inspect.getmembers(module):
-        if inspect.ismodule(obj) or getattr(obj, "__module__", None) != module_name:
+
+def render_params(items, kind):
+    """items: numpydoc Parameter tuples. kind: 'params' | 'returns'."""
+    out = ['<dl class="api-params">']
+    for p in items:
+        name = f"<dt><code>{html.escape(p.name)}</code>" if p.name else "<dt>"
+        typ = f' <span class="api-type">{html.escape(p.type)}</span>' if p.type else ""
+        out.append(f"{name}{typ}</dt>")
+        out.append("<dd>\n")
+        out.append(join(p.desc) or "")
+        out.append("\n</dd>")
+    out.append("</dl>\n")
+    return "\n".join(out)
+
+
+def render_see_also(items, local_names):
+    links = []
+    for funcs, desc in items:
+        for fname, _role in funcs:
+            short = fname.split(".")[-1]
+            target = f"[`{short}`](../{short}/)" if short in local_names else f"`{fname}`"
+            d = join(desc)
+            links.append(f"- {target}" + (f" — {d}" if d else ""))
+    return "\n".join(links) + "\n"
+
+
+def render_examples(lines):
+    text = join(lines)
+    if ">>>" in text:
+        return f"```pycon\n{text}\n```\n"
+    return text + "\n"
+
+
+def render_doc(obj, level, local_names, skip=()):
+    """Render all docstring sections of obj. `level`=2 for pages, 0 for methods."""
+    doc = parse(obj)
+    out = []
+    ext = join(doc["Extended Summary"])
+    if ext:
+        out.append(ext + "\n")
+
+    for section, kind in (("Parameters", "params"), ("Attributes", "params"),
+                          ("Returns", "returns"), ("Yields", "returns"),
+                          ("Raises", "params")):
+        if section in skip or not doc[section]:
             continue
+        out.append(label(section, level))
+        out.append(render_params(doc[section], kind))
+
+    if doc["See Also"]:
+        out.append(label("See Also", level))
+        out.append(render_see_also(doc["See Also"], local_names))
+    for section in ("Notes", "References"):
+        if doc[section]:
+            out.append(label(section, level))
+            out.append(join(doc[section]) + "\n")
+    if doc["Examples"]:
+        out.append(label("Examples", level))
+        out.append(render_examples(doc["Examples"]))
+    return "\n".join(out)
+
+
+def class_tables(cls):
+    props, methods = [], []
+    for name, member in inspect.getmembers(cls):
         if name.startswith("_"):
             continue
-
-        if inspect.isclass(obj):
-            yield name, "class", f"{module_name}:{name}", obj
-        elif inspect.isfunction(obj):
-            yield name, "function", f"{module_name}:{name}", obj
-
-
-def format_docstring_fallback(docstring):
-    """Convert NumPy-style docstring sections into clean Markdown headers and lists."""
-    if not docstring:
-        return "_No documentation provided._"
-
-    sections = [
-        "Parameters", "Returns", "Yields", "Raises",
-        "See Also", "Notes", "References", "Examples", "Attributes"
-    ]
-    pattern = r"^(" + "|".join(sections) + r")\n-+\n"
-    formatted = re.sub(pattern, r"### \1\n", docstring, flags=re.MULTILINE)
-    return formatted
-
-
-def build_class_methods_summary(cls_obj):
-    """Generate a Pandas-style summary table of public methods and properties for a class."""
-    methods = []
-    properties = []
-
-    for name, member in inspect.getmembers(cls_obj):
-        if name.startswith("_") and name != "__init__":
-            continue
-        if inspect.isfunction(member) or inspect.ismethod(member):
-            summary = get_first_sentence(member)
-            methods.append((name, summary))
-        elif isinstance(member, property):
-            summary = get_first_sentence(member.fget)
-            properties.append((name, summary))
-
-    md_sections = []
-    if properties:
-        md_sections.append("### Attributes / Properties\n\n| Property | Description |\n| :--- | :--- |")
-        for name, summary in properties:
-            md_sections.append(f"| `{name}` | {summary} |")
-        md_sections.append("")
-
+        if isinstance(member, property):
+            props.append((name, first_sentence(member.fget) if member.fget else ""))
+        elif inspect.isfunction(member) or inspect.ismethod(member):
+            methods.append((name, member))
+    out = []
+    if props:
+        out += ["## Properties\n", "| Property | Description |", "| :--- | :--- |"]
+        out += [f"| `{n}` | {d} |" for n, d in props] + [""]
     if methods:
-        md_sections.append("### Methods Summary\n\n| Method | Description |\n| :--- | :--- |")
-        for name, summary in methods:
-            md_sections.append(f"| `{name}` | {summary} |")
-        md_sections.append("")
-
-    return "\n".join(md_sections)
+        out += ["## Methods\n", "| Method | Description |", "| :--- | :--- |"]
+        out += [f"| [`{n}`](#{n.lower()}) | {first_sentence(m)} |" for n, m in methods] + [""]
+    return "\n".join(out), methods
 
 
-def generate_page(base_config, module_name, obj_name, obj_type, obj, module_dir):
-    """Generates an individual, richly styled markdown page for a specific object."""
-    out_file = module_dir / f"{obj_name}.md"
-    full_qual_name = f"{module_name}.{obj_name}"
+# --------------------------------------------------------------------------
+# Page writers
+# --------------------------------------------------------------------------
+def write_page(module_name, name, kind, obj, module_dir, local_names):
+    full = f"{module_name}.{name}"
+    badge = "class" if kind == "class" else "function"
+    meta = f'<p class="api-meta"><span class="api-badge api-badge-{badge}">{badge}</span> '
+    meta += f"<code>{module_name}</code>"
+    link = source_link(obj)
+    meta += f" · {link}" if link else ""
+    meta += "</p>"
+    # a markdown link inside raw HTML isn't parsed: use an <a> instead
+    if link:
+        url = link[link.index("(") + 1:-1]
+        meta = meta.replace(link, f'<a href="{url}">source</a>')
 
-    # Merge base config settings with object-specific filter
-    base_renderer = base_config.get("renderer", {"type": "markdown"}).copy()
-    base_renderer.update({
-        "render_module_header": False,
-        "descriptive_class_title": False,
-        "signature_code_block": True,
-        "signature_with_def": True,
-    })
+    parts = [
+        f"---\ntitle: {name}\ndescription: {first_sentence(obj)}\n---\n",
+        meta + "\n",
+        f"```python\n{'class ' if kind == 'class' else ''}{signature(obj, full)}\n```\n",
+        first_sentence(obj) + "\n",
+        render_doc(obj, 2, local_names),
+    ]
 
-    temp_config = {
-        "loaders": [{
-            "type": "python",
-            "search_path": ["."],
-            "modules": [module_name]
-        }],
-        "processors": [
-            {
-                "type": "filter",
-                "expression": f"name == '{obj_name}' or default()",
-                "documented_only": False
-            },
-            {"type": "smart"},
-            {"type": "crossref"}
-        ],
-        "renderer": base_renderer
-    }
+    if kind == "class":
+        tables, methods = class_tables(obj)
+        parts.append(tables)
+        for mname, m in methods:
+            parts.append(f"### {mname}\n")
+            parts.append(f"```python\n{signature(m, f'{name}.{mname}')}\n```\n")
+            parts.append(first_sentence(m) + "\n")
+            parts.append(render_doc(m, 0, local_names))
 
-    temp_file = f"temp_pydoc_{os.getpid()}.yml"
-    with open(temp_file, "w") as f:
-        yaml.dump(temp_config, f)
-
-    try:
-        result = subprocess.run(
-            ["pydoc-markdown", "--config", temp_file],
-            capture_output=True, text=True, check=True
-        )
-        content = result.stdout.strip()
-    except subprocess.CalledProcessError:
-        content = ""
-    finally:
-        if os.path.exists(temp_file):
-            os.remove(temp_file)
-
-    # Fallback or enhancement if pydoc-markdown output is empty
-    if not content:
-        docstring = format_docstring_fallback(inspect.getdoc(obj))
-        try:
-            sig = str(inspect.signature(obj))
-        except (ValueError, TypeError):
-            sig = "()"
-        prefix = "class" if obj_type == "class" else "def"
-        content = f"```python\n{prefix} {full_qual_name}{sig}\n```\n\n{docstring}"
-
-    # Build header metadata (Module path + Source link + Type badge)
-    source_link = get_source_link(obj)
-    badge_type = "Class" if obj_type == "class" else "Function"
-    header_bar = f"**Module:** `{module_name}` | **Type:** `{badge_type}`"
-    if source_link:
-        header_bar += f" | {source_link}"
-
-    # For classes, inject a Pandas-style summary table before the detailed method docs
-    summary_tables = build_class_methods_summary(obj) if obj_type == "class" else ""
-
-    frontmatter = (
-        f"---\n"
-        f"title: {obj_name}\n"
-        f"description: API Reference for {full_qual_name}\n"
-        f"---\n\n"
-    )
-
-    final_markdown = f"{frontmatter}{header_bar}\n\n{summary_tables}\n\n{content}\n"
-
-    with open(out_file, "w", encoding="utf-8") as f:
-        f.write(final_markdown)
-    print(f"  Created: {out_file}")
+    (module_dir / f"{name}.md").write_text("\n".join(parts), encoding="utf-8")
+    print(f"  Created: {module_dir / (name + '.md')}")
 
 
-def generate_module_index(module_name, members, module_dir):
-    """Generates a Pandas/NumPy-style module overview page with summary tables."""
-    if not members:
-        return
-
+def write_index(module_name, members, module_dir):
     module = importlib.import_module(module_name)
     mod_doc = inspect.getdoc(module) or f"API reference for `{module_name}`."
-
-    classes = [m for m in members if m[1] == "class"]
-    functions = [m for m in members if m[1] == "function"]
-
-    lines = [
-        "---",
-        f"title: {module_name}",
-        f"description: Overview of {module_name}",
-        "sidebar:",
-        "  order: 0",
-        "---",
-        "",
-        mod_doc,
-        ""
-    ]
-
-    if classes:
-        lines.extend([
-            "## Classes",
-            "",
-            "| Class | Description |",
-            "| :--- | :--- |"
-        ])
-        for name, _, _, obj in classes:
-            summary = get_first_sentence(obj)
-            lines.append(f"| [`{name}`](./{name}/) | {summary} |")
-        lines.append("")
-
-    if functions:
-        lines.extend([
-            "## Functions",
-            "",
-            "| Function | Description |",
-            "| :--- | :--- |"
-        ])
-        for name, _, _, obj in functions:
-            summary = get_first_sentence(obj)
-            lines.append(f"| [`{name}`](./{name}/) | {summary} |")
-        lines.append("")
-
-    index_file = module_dir / "index.md"
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
-    print(f"  Created Module Index: {index_file}")
+    lines = ["---", f"title: {module_name}", f"description: Overview of {module_name}",
+             "sidebar:", "  order: 0", "---", "", mod_doc, ""]
+    for heading, kind in (("Classes", "class"), ("Functions", "function")):
+        rows = [(n, o) for n, k, o in members if k == kind]
+        if rows:
+            lines += [f"## {heading}", "", f"| {kind.title()} | Description |", "| :--- | :--- |"]
+            lines += [f"| [`{n}`](./{n}/) | {first_sentence(o)} |" for n, o in rows] + [""]
+    (module_dir / "index.md").write_text("\n".join(lines), encoding="utf-8")
+    print(f"  Created Module Index: {module_dir / 'index.md'}")
 
 
 def main():
-    config = load_config()
-    packages = config.get("packages", ["my_package", "grb_ml"])
-    DOCS_DIR.mkdir(parents=True, exist_ok=True)
+    packages = sys.argv[1:] or PACKAGES
+    if DOCS_DIR.exists():
+        shutil.rmtree(DOCS_DIR)  # drop stale pages for removed/renamed objects
+    DOCS_DIR.mkdir(parents=True)
 
     for pkg in packages:
         pkg_name = pkg.replace("-", "_")
         print(f"\nScanning package: {pkg_name}...")
-
         for module_name in get_package_modules(pkg_name):
-            members = list(extract_members(module_name))
+            members = extract_members(module_name)
             if not members:
                 continue
-
-            # Organize into nested directories matching module hierarchy
-            rel_module_path = Path(*module_name.split("."))
-            module_dir = DOCS_DIR / rel_module_path
+            module_dir = DOCS_DIR / Path(*module_name.split("."))
             module_dir.mkdir(parents=True, exist_ok=True)
-
-            generate_module_index(module_name, members, module_dir)
-
-            for obj_name, obj_type, _, obj in members:
-                generate_page(config, module_name, obj_name, obj_type, obj, module_dir)
+            write_index(module_name, members, module_dir)
+            local_names = {n for n, _, _ in members}
+            for name, kind, obj in members:
+                write_page(module_name, name, kind, obj, module_dir, local_names)
 
 
 if __name__ == "__main__":
