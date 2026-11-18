@@ -2,16 +2,49 @@ import numpy as np
 
 def split_windows(detector_counts, i, background_bins_number=100, foreground_bins_number=10):
     """
-    Splits the detected signal counts into a background window (100 bins before given bin i) and a foreground window (10 bins after i).\\
+    Split a detector time series into foreground and background windows.
 
-    Args:\\
-        - `detector_counts` (type): output of simulations.detector_counts() \\
-        - `i`: the bin index to split \\
-        - `background_bins_number` (int): set to 100 by default \\
-        - `foreground_bins_number` (int): set to 10 by default \\
+    The background window holds the `background_bins_number` bins *before*
+    bin `i`; the foreground window holds the `foreground_bins_number` bins
+    starting *at* bin `i`.
 
-    Returns:\\
-        - Tuple of Tuples of arrays. Returns `(fg_window, bg_window)` each being a tuple of array containing the low-energy and high-energy channels slices of the original array for the foreground and background window respectively.
+    Parameters
+    ----------
+    detector_counts : tuple of numpy.ndarray
+        ``(low_counts, high_counts)``, as returned by
+        `simulations.detector_counts`.
+    i : int
+        Index of the first foreground bin.
+    background_bins_number : int, default 100
+        Number of bins in the background window.
+    foreground_bins_number : int, default 10
+        Number of bins in the foreground window.
+
+    Returns
+    -------
+    fg_window : tuple of numpy.ndarray
+        ``(low, high)`` slices of the foreground window.
+    bg_window : tuple of numpy.ndarray
+        ``(low, high)`` slices of the background window.
+
+    Raises
+    ------
+    ValueError
+        If the channels are empty or differ in length, if a window size is
+        not positive, or if there are not enough bins around `i`.
+
+    See Also
+    --------
+    feature_extraction_loop : Applies this function at every valid bin.
+
+    Examples
+    --------
+    >>> bkg = generate_background(500)
+    >>> counts = detector_counts(bkg, [{"signal": generate_grb_pulse(50, 80),
+    ...                                 "start_bin": 200, "type": "grb"}])
+    >>> fg, bg = split_windows(counts, 200)
+    >>> len(fg[0]), len(bg[0])
+    (10, 100)
     """
 
     low_counts, high_counts = detector_counts
@@ -47,15 +80,28 @@ def split_windows(detector_counts, i, background_bins_number=100, foreground_bin
 
 def compute_snr(fg_window, bg_window):
     """
-    Computes the signal-to-noise ratio (SNR) for a signal divided into foreground and background windows.
+    Compute the signal-to-noise ratio of each energy channel.
 
-    Args:
-        fg_window (tuple of arrays): The foreground window returned by split_windows.
-        bg_window (tuple of arrays): The background window returned by split_windows.
+    Parameters
+    ----------
+    fg_window, bg_window : tuple of numpy.ndarray
+        Windows returned by `split_windows`.
 
-    Returns:
-        SNR (array of arrays): SNR for the low (index=0) and high (index=1) energy channels. The SNR is given by (mean_foreground - mean_background) / std_background, for each channel separately.
+    Returns
+    -------
+    snr : numpy.ndarray, shape (2,)
+        SNR of the low (index 0) and high (index 1) channel.
 
+    Raises
+    ------
+    ValueError
+        If a window is empty or the background standard deviation is zero.
+
+    Notes
+    -----
+    For each channel,
+
+    .. math:: \\mathrm{SNR} = \\frac{\\bar{x}_\\mathrm{fg} - \\bar{x}_\\mathrm{bg}}{\\sigma_\\mathrm{bg}}
     """
     snr = np.zeros(2)
 
@@ -74,14 +120,27 @@ def compute_snr(fg_window, bg_window):
 
 def compute_hardness_ratio(fg_window, bg_window):
     """
-    Computes the hardness ratio (HR) for a detector signal splitted into background and foreground windows.
+    Compute the hardness ratio (HR) of the background-subtracted signal.
 
-    Args:
-        fg_window (tuple of arrays): The foreground window returned by split_windows.
-        bg_window (tuple of arrays): The background window returned by split_windows.
+    Parameters
+    ----------
+    fg_window, bg_window : tuple of numpy.ndarray
+        Windows returned by `split_windows`.
 
-    Returns:
-        HR (int): hardness ratio for the signal given by (foreground_high_mean - background_high_mean) / (foreground_low_mean - background_low_mean)
+    Returns
+    -------
+    float
+        Net high-channel rate divided by net low-channel rate. ``0.0`` if
+        either net rate is not positive.
+
+    Raises
+    ------
+    ValueError
+        If a window is empty.
+
+    Notes
+    -----
+    .. math:: \\mathrm{HR} = \\frac{\\bar{x}^\\mathrm{high}_\\mathrm{fg} - \\bar{x}^\\mathrm{high}_\\mathrm{bg}}{\\bar{x}^\\mathrm{low}_\\mathrm{fg} - \\bar{x}^\\mathrm{low}_\\mathrm{bg}}
     """
 
     for i in range(2):
@@ -99,14 +158,22 @@ def compute_hardness_ratio(fg_window, bg_window):
 
 def compute_peak_to_mean_ratio(fg_window):
     """
-    ...
+    Compute the peak-to-mean ratio of the foreground window.
 
-    Args:
-        fg_window (tuple of arrays): The foreground window returned by split_windows.
+    Parameters
+    ----------
+    fg_window : tuple of numpy.ndarray
+        Foreground window returned by `split_windows`.
 
-    Returns:
-        Array of values containing the peak-to-mean ratio for the low-energy (index=0) and high-energy (index=1) channels.
+    Returns
+    -------
+    numpy.ndarray, shape (2,)
+        ``max / mean`` for the low and high channel (``0`` if the mean is 0).
 
+    Raises
+    ------
+    ValueError
+        If a channel of `fg_window` is empty.
     """
 
     peak2mean_ratio = np.zeros(2)
@@ -128,13 +195,28 @@ def compute_peak_to_mean_ratio(fg_window):
 
 def compute_asymmetry_ratio(fg_window):
     """
-    ...
+    Compute the temporal asymmetry of the foreground window.
 
-    Args:
-        fg_window (tuple of arrays): The foreground window returned by      split_windows.
-        
-    Returns:
-        assymetry_ratio (tuple)
+    Parameters
+    ----------
+    fg_window : tuple of numpy.ndarray
+        Foreground window returned by `split_windows`.
+
+    Returns
+    -------
+    numpy.ndarray, shape (2,)
+        Mean of the first half divided by mean of the second half, for the
+        low and high channel (``0`` if the second-half mean is 0).
+
+    Raises
+    ------
+    ValueError
+        If a channel has two or fewer bins.
+
+    Notes
+    -----
+    GRB pulses rise fast and decay slowly, so they give values above 1;
+    symmetric events (e.g. SAA crossings) give values near 1.
     """
 
     asymmetry_ratio = np.zeros(2)
@@ -160,15 +242,30 @@ def compute_asymmetry_ratio(fg_window):
 
 def feature_extraction_loop(detector_counts, background_bins_number=100, foreground_bins_number=10):
     """
-    Feature Extraction loop\\
+    Extract the feature matrix by sliding over every valid bin.
 
-    Args:\\
-        - `detector_counts` (type): output of simulations.detector_counts() \\
-        - `background_bins_number` (int): set to 100 by default \\
-        - `foreground_bins_number` (int): set to 10 by default \\
+    Parameters
+    ----------
+    detector_counts : tuple of numpy.ndarray
+        ``(low_counts, high_counts)``.
+    background_bins_number : int, default 100
+        Background window size.
+    foreground_bins_number : int, default 10
+        Foreground window size.
 
-    Returns:\\
-        X (NumPy Array): of shape (n_valid_windows, 7), the feature matrix
+    Returns
+    -------
+    X : numpy.ndarray, shape (n_valid_windows, 7)
+        Columns: SNR low, SNR high, HR, peak-to-mean low/high,
+        asymmetry low/high.
+
+    See Also
+    --------
+    split_windows
+    compute_snr
+    compute_hardness_ratio
+    compute_peak_to_mean_ratio
+    compute_asymmetry_ratio
     """
 
     X = []
