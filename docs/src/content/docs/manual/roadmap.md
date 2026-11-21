@@ -71,22 +71,22 @@ In other words, the labels mark the whole burst as positive while the features c
 
 Size: S is up to 2 hours, M up to 4 hours, L up to a day. These are rough estimates for someone who knows the code: about 44 hours in total (without T-13), of which about 32 are the critical path owned by the maintainer. Tasks marked "open" are small and independent, suitable for other contributors.
 
-| ID | Task | Module | Size | Owner (proposed) | Status | Depends on |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| T-00 | Decide the package name and rename | all | S | @joanalnu | Todo | none |
-| T-01 | Make features and labels consistent (background contamination) | features, dataset | M | @joanalnu | Todo | none |
-| T-02 | Reproducible randomness (seed or `Generator`) | simulations | S | open | Todo | none |
-| T-03 | Detector configuration with placeholder values | simulations, features | M | @joanalnu | Todo | T-02 |
-| T-04 | Build `generate_dataset` (Monte Carlo orbits, grouped by orbit) | dataset | M | @joanalnu | Todo | T-01, T-03 |
-| T-05 | Threshold baseline trigger | models | S | open | Todo | T-01 |
-| T-06 | `scikit-learn` models behind the same interface | models | M | @joanalnu | Todo | T-04, T-05 |
-| T-07 | Event-level evaluation under a false-alarm budget | evaluate | L | @joanalnu | Todo | T-05 |
-| T-08 | End-to-end example, from clone to comparison plot | examples | M | @joanalnu | Todo | T-06, T-07 |
-| T-09 | Tests for simulations, features and dataset, plus CI | tests | M | open | Todo | T-02 |
-| T-10 | Packaging hygiene | setup | S | open | Todo | none |
-| T-11 | Documentation sync | docs | S | open | Todo | T-08 |
-| T-12 | Handover walkthrough and checklist | all | S | @joanalnu and receiving maintainer | Todo | T-01 to T-11 |
-| T-13 | Run the benchmark with real detector parameters and write up the findings | docs | M | collaborator (TBD) | Todo | T-08, parameters available |
+| ID   | Task                                                                      | Module                | Size | Owner (proposed)                   | Status | Depends on                 |
+|:-----|:--------------------------------------------------------------------------|:----------------------|:-----|:-----------------------------------|:-------|:---------------------------|
+| T-00 | Decide the package name and rename                                        | all                   | S    | @joanalnu                          | Done   | none                       |
+| T-01 | Make features and labels consistent (background contamination)            | features, dataset     | M    | @joanalnu                          | Todo   | none                       |
+| T-02 | Reproducible randomness (seed or `Generator`)                             | simulations           | S    | open                               | Todo   | none                       |
+| T-03 | Detector configuration with placeholder values                            | simulations, features | M    | @joanalnu                          | Todo   | T-02                       |
+| T-04 | Build `generate_dataset` (Monte Carlo orbits, grouped by orbit)           | dataset               | M    | @joanalnu                          | Todo   | T-01, T-03                 |
+| T-05 | Threshold baseline trigger                                                | models                | S    | open                               | Todo   | T-01                       |
+| T-06 | `scikit-learn` models behind the same interface                           | models                | M    | @joanalnu                          | Todo   | T-04, T-05                 |
+| T-07 | Event-level evaluation under a false-alarm budget                         | evaluate              | L    | @joanalnu                          | Todo   | T-05                       |
+| T-08 | End-to-end example, from clone to comparison plot                         | examples              | M    | @joanalnu                          | Todo   | T-06, T-07                 |
+| T-09 | Tests for simulations, features and dataset, plus CI                      | tests                 | M    | open                               | Todo   | T-02                       |
+| T-10 | Packaging hygiene                                                         | setup                 | S    | open                               | Todo   | none                       |
+| T-11 | Documentation sync                                                        | docs                  | S    | open                               | Todo   | T-08                       |
+| T-12 | Handover walkthrough and checklist                                        | all                   | S    | @joanalnu and receiving maintainer | Todo   | T-01 to T-11               |
+| T-13 | Run the benchmark with real detector parameters and write up the findings | docs                  | M    | collaborator (TBD)                 | Todo   | T-08, parameters available |
 
 ### Task details
 
