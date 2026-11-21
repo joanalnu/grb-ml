@@ -1,0 +1,132 @@
+#+TITLE: README
+#+options: ^:{}
+
+* GRB-ML
+
+Simulate CubeSat photon-count streams and benchmark gamma-ray burst (GRB) triggers on them: classical thresholds versus lightweight scikit-learn classifiers.
+
+#+begin_quote
+*Status: early development (v0.1, pre-release).* The simulator and the feature extraction work. The dataset builder, the models and the evaluation are still being written. See [[#status][Status]] and the [[file:docs/src/content/docs/manual/roadmap.md][roadmap]].
+
+*Working name.* A package with the same name already exists on GitHub, so this project is likely to be renamed (roadmap task T-00).
+#+end_quote
+
+** What is GRB-ML?
+
+A GRB monitor on a small satellite has to decide, from photon counts alone and with very little computing power, whether a sudden rise in counts is a real burst worth alerting the community about (for example through [[https://gcn.nasa.gov/][GCN]]) or something else: a cosmic-ray hit, a pass through the [[https://en.wikipedia.org/wiki/South_Atlantic_Anomaly][South Atlantic Anomaly]] (SAA), or a Poisson fluctuation.
+
+GRB-ML is a small toolkit for studying that decision. It
+
+1. *simulates* two-channel count streams (background, bursts, cosmic-ray spikes, SAA crossings),
+2. *extracts features* from rolling windows (signal-to-noise ratio, hardness ratio, peak-to-mean ratio, asymmetry), and
+3. will *train and compare* a threshold trigger and scikit-learn models under a false-alarm budget.
+
+It is a research and teaching tool, not flight software. It does not assume a specific detector: the rates and bin widths it uses today are placeholders until real detector parameters are available, so results are for comparing methods, not for predicting mission performance.
+
+** Status
+
+| Module                  | What it does                                                     | State                                                 |
+|-------------------------+------------------------------------------------------------------+-------------------------------------------------------|
+| ~grb_ml/simulations.py~ | Background, burst, cosmic-ray and SAA generators; event injector | Implemented, not yet unit-tested                      |
+| ~grb_ml/features.py~    | Window splitting and 7 features per window                       | Implemented; see known limitations                    |
+| ~grb_ml/dataset.py~     | Labels for each window; multi-orbit dataset builder              | ~generate_labels~ works; ~generate_dataset~ is a stub |
+| ~grb_ml/models.py~      | Threshold baseline and scikit-learn models                       | Empty                                                 |
+| ~grb_ml/evaluate.py~    | Metrics under a false-alarm budget                               | Empty                                                 |
+
+*** Known limitations
+
+- *Background contamination.* The background estimate comes from the 100 bins before each window. During a long burst those bins contain the burst, so the signal-to-noise ratio collapses while the label still says "GRB". This has to be fixed before any model is trained (roadmap task T-01).
+- *No seed control.* The simulators use NumPy's global random state; call ~numpy.random.seed(...)~ for reproducible runs (roadmap task T-02).
+- *Placeholder detector numbers.* Background rates and bin width are hard-coded defaults (roadmap task T-03).
+
+** Installation
+
+Requires Python 3.12 or newer.
+
+#+begin_src bash
+git clone https://github.com/joanalnu/grb-ml.git
+cd grb-ml
+pip install -e .
+pip install matplotlib scikit-learn   # for the examples, and for the models once they exist
+#+end_src
+
+~pip install -e .~ currently also installs some development tools (such as ~twine~ and ~pytest~) because the requirements are not yet split into runtime and development (roadmap task T-10). The package is not on PyPI.
+
+** Quickstart
+
+Simulate one orbit with three events, extract features and labels:
+
+#+begin_src python
+import numpy as np
+from grb_ml.simulations import (
+    generate_background, generate_grb_pulse, generate_false_alarm,
+    generate_saa_crossing, detector_counts,
+)
+from grb_ml.features import feature_extraction_loop
+from grb_ml.dataset import generate_labels
+
+np.random.seed(42)
+n_bins = 1000
+
+background = generate_background(n_bins)            # (low, high) Poisson counts
+events = [
+    {"signal": generate_saa_crossing(300, 50),      "start_bin": 100, "type": "saa",        "is_grb": 0},
+    {"signal": generate_false_alarm(2, 160),        "start_bin": 520, "type": "cosmic_ray", "is_grb": 0},
+    {"signal": generate_grb_pulse(120, 90, tau_decay=25.0, hardness_ratio=1.6),
+                                                     "start_bin": 700, "type": "grb",        "is_grb": 1},
+]
+
+counts = detector_counts(background, events)        # background with events added
+X = feature_extraction_loop(counts)                 # one row per window, 7 features
+y = generate_labels(n_bins, events)                 # 1 = a GRB fills at least half the window
+
+print(X.shape, y.shape)                             # (891, 7) (891,)
+#+end_src
+
+The 7 feature columns are: SNR (low channel), SNR (high channel), hardness ratio, peak-to-mean ratio (low, high), asymmetry ratio (low, high). ~tests/examples/simulations_example.py~ plots a similar timeline.
+
+** Project layout
+
+#+begin_src text
+grb_ml/
+  simulations.py   synthetic count streams
+  features.py      rolling windows and feature extraction
+  dataset.py       labels and (in progress) the multi-orbit dataset builder
+  models.py        (empty) threshold baseline and scikit-learn models
+  evaluate.py      (empty) metrics and false-alarm budget
+tests/             unit tests; tests/examples/ holds runnable demos
+docs/              documentation site (Astro Starlight)
+generate_docs.py   builds the API reference pages from the docstrings
+#+end_src
+
+** Documentation
+
+The documentation site lives in ~docs/~. The API reference is generated from the NumPy-style docstrings; do not edit those pages by hand.
+
+#+begin_src bash
+pip install numpydoc
+python generate_docs.py          # run from the repository root
+cd docs && npm install && npm run dev
+#+end_src
+
+** Contributing
+
+Work is organised as numbered tasks in the [[file:docs/src/content/docs/manual/roadmap.md][roadmap]], which also explains the working agreement and the handover plan. Small tasks marked "open" are good starting points.
+
+This is an educational project, so it has an [[file:docs/src/content/docs/manual/ai-policy.md][AI policy]]: AI tools may be used to guide development and debugging in "learning" mode, not as a code generator, and any use must be disclosed in your pull request.
+
+** Authorship
+
+Developed by [[https://joanalnu.pages.dev][J. Alcaide-Núñez]] and contributors from the GAMMA team of the [[https://capibara3.github.io/][CAPIBARA Collaboration]], a student-led collaboration studying gamma-ray bursts and cosmic rays.
+
+** Citation
+
+There is no scientific citation yet. If you use this package in your research, please acknowledge it.
+
+** License
+
+MIT, as declared in ~setup.py~. A ~LICENSE~ file has not been added yet (roadmap task T-10).
+
+-----
+
+/Disclosure (per the project's AI policy): this README was drafted with LLM assistance (Claude)./

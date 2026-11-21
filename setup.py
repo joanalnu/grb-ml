@@ -13,14 +13,14 @@ with open("grb_ml/_version.py", "r") as version_file:
 
 
 setup(
-        name="GRB-ML",
+        name="GRB-TRIGGER",
         # version=__version__,
         author="Alcaide-Núñez, J.",
         author_email="",
-        description="CubeSat GRB Detection",
+        description="CubeSat GRB Trigger Detection",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        url="https://github.com/joanalnu/grb-ml",
+        url="https://github.com/joanalnu/grb-trigger",
         packages=find_packages(),
         python_requires=">=3.12",
         install_requires=requirements,

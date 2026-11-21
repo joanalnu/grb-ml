@@ -1,7 +1,7 @@
 ---
 title: Installation
 author: joanalnu
-description: "Instructions on how to install the GRB-ML package."
+description: "Instructions on how to install the GRB-TRIGGER package."
 ---
 
 ## Requirements
@@ -16,12 +16,12 @@ The package is not yet available in to the public.
 
 You can clone the GitHub repository
 ```bash
-git clone https://github.com/joanalnu/grb-ml.git
+git clone https://github.com/joanalnu/grb-trigger.git
 ```
 
 Then go into the directory and install the package
 ```bash
-cd grb-ml
+cd grb-trigger
 pip install .
 ```
 
