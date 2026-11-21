@@ -1,5 +1,4 @@
 #+TITLE: README
-#+options: ^:{}
 
 * GRB-ML
 
