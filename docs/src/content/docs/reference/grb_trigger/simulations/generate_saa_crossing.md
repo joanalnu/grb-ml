@@ -3,10 +3,10 @@ title: generate_saa_crossing
 description: Generate a slow, symmetric South Atlantic Anomaly crossing.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.simulations</code></p>
 
 ```python
-grb_ml.simulations.generate_saa_crossing(duration_bins=300, amplitude=60, hardness_ratio=0.4)
+grb_trigger.simulations.generate_saa_crossing(duration_bins=300, amplitude=60, hardness_ratio=0.4)
 ```
 
 Generate a slow, symmetric South Atlantic Anomaly crossing.

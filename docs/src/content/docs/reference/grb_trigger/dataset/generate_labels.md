@@ -3,10 +3,10 @@ title: generate_labels
 description: Produces the 1D target array matching the exact rows returned by features.feature_extraction_loop().
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.dataset</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.dataset</code></p>
 
 ```python
-grb_ml.dataset.generate_labels(n_bins, events, background_bins_number=100, foreground_bins_number=10)
+grb_trigger.dataset.generate_labels(n_bins, events, background_bins_number=100, foreground_bins_number=10)
 ```
 
 Produces the 1D target array matching the exact rows returned by features.feature_extraction_loop().

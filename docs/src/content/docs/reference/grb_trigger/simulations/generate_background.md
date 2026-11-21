@@ -3,10 +3,10 @@ title: generate_background
 description: Generate Poisson background counts for both energy channels.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.simulations</code></p>
 
 ```python
-grb_ml.simulations.generate_background(n_bins, lam_low=40, lam_high=15)
+grb_trigger.simulations.generate_background(n_bins, lam_low=40, lam_high=15)
 ```
 
 Generate Poisson background counts for both energy channels.

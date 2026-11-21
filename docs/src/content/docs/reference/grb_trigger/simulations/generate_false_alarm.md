@@ -3,10 +3,10 @@ title: generate_false_alarm
 description: Generate a short, sharp spike mimicking a cosmic-ray hit.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.simulations</code></p>
 
 ```python
-grb_ml.simulations.generate_false_alarm(duration_bins=2, amplitude=150)
+grb_trigger.simulations.generate_false_alarm(duration_bins=2, amplitude=150)
 ```
 
 Generate a short, sharp spike mimicking a cosmic-ray hit.

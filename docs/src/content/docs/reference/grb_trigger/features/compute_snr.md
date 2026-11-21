@@ -3,10 +3,10 @@ title: compute_snr
 description: Compute the signal-to-noise ratio of each energy channel.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.features</code></p>
 
 ```python
-grb_ml.features.compute_snr(fg_window, bg_window)
+grb_trigger.features.compute_snr(fg_window, bg_window)
 ```
 
 Compute the signal-to-noise ratio of each energy channel.

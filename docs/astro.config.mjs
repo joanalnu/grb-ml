@@ -7,7 +7,7 @@ import rehypeKatex from 'rehype-katex';
 export default defineConfig({
   integrations: [
     starlight({
-      title: 'GRB-ML',
+      title: 'GRB-TRIGGER',
       customCss: [
         './src/styles/api.css',
         // Add the KaTeX stylesheet here

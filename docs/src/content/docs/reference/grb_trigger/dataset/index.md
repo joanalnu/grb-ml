@@ -1,11 +1,11 @@
 ---
-title: grb_ml.dataset
-description: Overview of grb_ml.dataset
+title: grb_trigger.dataset
+description: Overview of grb_trigger.dataset
 sidebar:
   order: 0
 ---
 
-API reference for `grb_ml.dataset`.
+API reference for `grb_trigger.dataset`.
 
 ## Functions
 

@@ -18,7 +18,7 @@ from pathlib import Path
 
 from numpydoc.docscrape import NumpyDocString
 
-PACKAGES = ["grb_ml"]  # <- your package name(s)
+PACKAGES = ["grb_trigger"]  # <- your package name(s)
 DOCS_DIR = Path("docs/src/content/docs/reference")
 REPO_URL = os.environ.get("REPO_URL", "")  # e.g. https://github.com/org/repo/blob/main
 

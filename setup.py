@@ -6,7 +6,7 @@ with open("README.md", "r") as readme_file:
 with open("requirements.txt", "r") as requirements_file:
     requirements = requirements_file.read()
 
-with open("grb_ml/_version.py", "r") as version_file:
+with open("grb_trigger/_version.py", "r") as version_file:
     for line in version_file:
         if "__version__" in line:
             __version__ = line.split()[-1].replace('"','')

@@ -1,6 +1,6 @@
 ---
-title: grb_ml.features
-description: Overview of grb_ml.features
+title: grb_trigger.features
+description: Overview of grb_trigger.features
 sidebar:
   order: 0
 ---

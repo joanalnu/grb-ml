@@ -3,10 +3,10 @@ title: feature_extraction_loop
 description: Extract the feature matrix by sliding over every valid bin.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.features</code></p>
 
 ```python
-grb_ml.features.feature_extraction_loop(detector_counts, background_bins_number=100, foreground_bins_number=10)
+grb_trigger.features.feature_extraction_loop(detector_counts, background_bins_number=100, foreground_bins_number=10)
 ```
 
 Extract the feature matrix by sliding over every valid bin.

@@ -3,10 +3,10 @@ title: generate_grb_pulse
 description: Generate a GRB pulse with a fast rise and exponential decay.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.simulations</code></p>
 
 ```python
-grb_ml.simulations.generate_grb_pulse(duration_bins, amplitude, tau_rise=2.0, tau_decay=20.0, hardness_ratio=1.5)
+grb_trigger.simulations.generate_grb_pulse(duration_bins, amplitude, tau_rise=2.0, tau_decay=20.0, hardness_ratio=1.5)
 ```
 
 Generate a GRB pulse with a fast rise and exponential decay.

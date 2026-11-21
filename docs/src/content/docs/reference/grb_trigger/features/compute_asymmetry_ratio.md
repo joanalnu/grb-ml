@@ -3,10 +3,10 @@ title: compute_asymmetry_ratio
 description: Compute the temporal asymmetry of the foreground window.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.features</code></p>
 
 ```python
-grb_ml.features.compute_asymmetry_ratio(fg_window)
+grb_trigger.features.compute_asymmetry_ratio(fg_window)
 ```
 
 Compute the temporal asymmetry of the foreground window.

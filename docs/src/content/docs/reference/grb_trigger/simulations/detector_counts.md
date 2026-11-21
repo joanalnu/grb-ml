@@ -3,10 +3,10 @@ title: detector_counts
 description: Inject events into a background time series.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.simulations</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.simulations</code></p>
 
 ```python
-grb_ml.simulations.detector_counts(bkg, events)
+grb_trigger.simulations.detector_counts(bkg, events)
 ```
 
 Inject events into a background time series.

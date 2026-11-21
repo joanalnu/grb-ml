@@ -1,6 +1,6 @@
 ---
-title: grb_ml.simulations
-description: Overview of grb_ml.simulations
+title: grb_trigger.simulations
+description: Overview of grb_trigger.simulations
 sidebar:
   order: 0
 ---

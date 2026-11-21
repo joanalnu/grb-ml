@@ -3,10 +3,10 @@ title: compute_hardness_ratio
 description: Compute the hardness ratio (HR) of the background-subtracted signal.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.features</code></p>
 
 ```python
-grb_ml.features.compute_hardness_ratio(fg_window, bg_window)
+grb_trigger.features.compute_hardness_ratio(fg_window, bg_window)
 ```
 
 Compute the hardness ratio (HR) of the background-subtracted signal.

@@ -3,10 +3,10 @@ title: compute_peak_to_mean_ratio
 description: Compute the peak-to-mean ratio of the foreground window.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.features</code></p>
 
 ```python
-grb_ml.features.compute_peak_to_mean_ratio(fg_window)
+grb_trigger.features.compute_peak_to_mean_ratio(fg_window)
 ```
 
 Compute the peak-to-mean ratio of the foreground window.

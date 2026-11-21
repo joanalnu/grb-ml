@@ -3,10 +3,10 @@ title: split_windows
 description: Split a detector time series into foreground and background windows.
 ---
 
-<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_ml.features</code></p>
+<p class="api-meta"><span class="api-badge api-badge-function">function</span> <code>grb_trigger.features</code></p>
 
 ```python
-grb_ml.features.split_windows(detector_counts, i, background_bins_number=100, foreground_bins_number=10)
+grb_trigger.features.split_windows(detector_counts, i, background_bins_number=100, foreground_bins_number=10)
 ```
 
 Split a detector time series into foreground and background windows.
