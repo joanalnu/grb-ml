@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-from grb_ml.dataset import generate_labels
+from grb_trigger.dataset import generate_labels
 
 def test_generate_labels_grb_overlap():
     # 1. ARRANGE: Set up mock inputs

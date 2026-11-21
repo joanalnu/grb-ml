@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import grb_ml.simulations as sim
+import grb_trigger.simulations as sim
 
 # Set seed for reproducible plots
 np.random.seed(42)
